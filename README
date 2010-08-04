@@ -1,0 +1,20 @@
+:: Description ::
+A gevent (http://www.gevent.org) adaption of Memcache from
+the Concurrence framework (http://opensource.hyves.org/concurrence).
+
+:: Requirements ::
+Requires Cython and gevent.
+
+:: Installation ::
+python setup.py install
+
+:: Usage ::
+See examples/
+
+:: Author ::
+Adaptation to gevent:
+Håkan Rosenhorn (hakan@esn.me)
+ESN (www.esn.me)
+
+Original: Henk Punt
+
