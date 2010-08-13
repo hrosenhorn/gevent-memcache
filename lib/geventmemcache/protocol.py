@@ -19,7 +19,7 @@ class MemcacheTextProtocol(MemcacheProtocol):
     def __init__(self, codec = "default"):
         self.set_codec(codec)
 
-    def check_keys(self, keys):
+    def _check_keys(self, keys):
         for key in keys:
             if not isinstance(key, str):
                 raise MemcacheError("Key must be string and not unicode or anything else")
@@ -32,7 +32,7 @@ class MemcacheTextProtocol(MemcacheProtocol):
                 if ord(c) < 33 or ord(c) == 127:
                     raise MemcacheError("Key contains whitespace or control characters")
 
-    def check_value(self, value):
+    def _check_value(self, value):
         if len(value) > MemcacheTextProtocol.MAX_VALUE_LENGTH:
             raise MemcacheError("Value can't be bigger then %d" % MemcacheTextProtocol.MAX_VALUE_LENGTH)
 
@@ -80,9 +80,9 @@ class MemcacheTextProtocol(MemcacheProtocol):
             return MemcacheResult.get(response_line), None
 
     def _write_storage(self, writer, cmd, key, value, expiration, flags, cas_unique = None):
-        self.check_keys([key])
+        self._check_keys([key])
         encoded_value, flags = self._codec.encode(value, flags)
-        self.check_value(encode_value)
+        self._check_value(encoded_value)
         if cas_unique is not None:
             writer.write_bytes("%s %s %d %d %d %d\r\n%s\r\n" % (cmd, key, flags, expiration, len(encoded_value), cas_unique, encoded_value))
         else:
@@ -95,7 +95,7 @@ class MemcacheTextProtocol(MemcacheProtocol):
         return self._read_result(reader)
 
     def _write_incdec(self, writer, cmd, key, value):
-        self.check_keys([key])
+        self._check_keys([key])
         writer.write_bytes("%s %s %s\r\n" % (cmd, key, value))
 
     def _read_incdec(self, reader):
@@ -118,11 +118,11 @@ class MemcacheTextProtocol(MemcacheProtocol):
         return self._read_incdec(reader)
 
     def write_get(self, writer, keys):
-        self.check_keys(keys)
+        self._check_keys(keys)
         writer.write_bytes("get %s\r\n" % " ".join(keys))
 
     def write_gets(self, writer, keys):
-        self.check_keys(keys)
+        self._check_keys(keys)
         writer.write_bytes("gets %s\r\n" % " ".join(keys))
 
     def read_get(self, reader, with_cas_unique = False):
@@ -151,7 +151,7 @@ class MemcacheTextProtocol(MemcacheProtocol):
         return self.read_get(reader, with_cas_unique = True)
 
     def write_delete(self, writer, key, expiration):
-        self.check_keys([key])
+        self._check_keys([key])
         writer.write_bytes("delete %s %d\r\n" % (key, expiration))
 
     def read_delete(self, reader):
