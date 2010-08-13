@@ -187,11 +187,11 @@ class MemcacheConnection(object):
     def cas(self, key, data, cas_unique, expiration = 0, flags = 0):
         return self._do_command("cas", (key, data, expiration, flags, cas_unique))[0]
 
-    def incr(self, key, increment):
-        return self._do_command("incr", (key, increment))
+    def incr(self, key, delta = 1):
+        return self._do_command("incr", (key, delta))
 
-    def decr(self, key, increment):
-        return self._do_command("decr", (key, increment))
+    def decr(self, key, delta = 1):
+        return self._do_command("decr", (key, delta))
 
     def get(self, key, default = None):
         _, values = self._do_command("get", ([key], ), {})
@@ -346,11 +346,11 @@ class Memcache(object):
     def cas(self, key, data, cas_unique, expiration = 0, flags = 0):
         return self.connection_for_key(key)._do_command("cas", (key, data, expiration, flags, cas_unique))[0]
 
-    def incr(self, key, increment):
-        return self.connection_for_key(key)._do_command("incr", (key, increment))
+    def incr(self, key, delta = 1):
+        return self.connection_for_key(key)._do_command("incr", (key, delta))
 
-    def decr(self, key, increment):
-        return self.connection_for_key(key)._do_command("decr", (key, increment))
+    def decr(self, key, delta = 1):
+        return self.connection_for_key(key)._do_command("decr", (key, delta))
 
     def get(self, key, default = None):
         return self._get("get", key, default)[1]
